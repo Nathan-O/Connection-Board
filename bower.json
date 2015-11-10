@@ -1,0 +1,21 @@
+{
+  "name": "connection-board",
+  "description": "",
+  "main": "server.js",
+  "authors": [
+    "Nathan Ockerman"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Nathan-O/Connection-Board",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5"
+  }
+}
