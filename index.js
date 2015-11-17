@@ -8,8 +8,10 @@
 
 // # [TITLE] # //
 
+////////////////////////
+//  # REQUIREMENTS  # //
+////////////////////////
 
-// # REQUIREMENTS # //
 var express = require("express");
 var session = require("express-session");
 var db = require("./models");
@@ -22,7 +24,10 @@ var _ = require("underscore");
 var app = express();
 
 
-// # CONFIG # //
+////////////////////////
+/////  # CONFIG #  /////
+////////////////////////
+
 app.use("/static", express.static("Public"));
 app.use("/vender", express.static("bower_components"));
 app.use(methodOverride("_method"));
@@ -32,14 +37,54 @@ app.use(cookieParser());
 var views = path.join(process.cwd(), "/Public/views");
 var userViews = path.join(process.cwd(), "/Public/views/user");
 
-// # ROUTES # //
+   // * Create Session * //
+app.use(
+	session({
+		secret: keygen._({specials: true}),
+		resave: false,
+		saveUninitialized: true
+	})
+);
+
+   // * Exentend req * //
+app.use(function (req, res, next){
+	// for login
+	req.login = function (user){
+		req.session.userId = user._id;
+	};
+
+	// get current user for profile
+	req.currentUser = function (callback){
+		db.User.findOne({ _id: req.session.userId }, function (err, user) {
+        req.user = user;
+        callback(null, user);
+      });
+	};
+
+	// log out user
+	req.logout = function(){
+		req.session.userId = null;
+		req.user = null;
+		console.log("Session id: " + req.session.userId);
+		console.log("User: " + req.user);
+		res.clearCookie("guid");
+	};
+	next();
+});
+
+
+////////////////////////
+/////  # ROUTES #  /////
+////////////////////////
+
+   // * Root * //
 app.get("/", function (req, res){
    // res.send("Hello World");
    var homePath = path.join(views, "index.html");
    res.sendFile(homePath);
 });
 
-   /* User Routes */
+   // * User Routes * //
 app.get("/signup", function(req, res){
    var signUpPath = path.join(userViews, "sign_up.html");
    res.sendFile(signUpPath);
@@ -50,8 +95,54 @@ app.get("/login", function(req, res){
    res.sendFile(loginPath);
 });
 
+app.post(["/login", "/api/session"], function (req, res){
+   var user = req.body.user;
+   var email = user.email;
+   var password = user.password;
 
-// # SERVER # //
+   db.User.authenticate(email, password, function (err, user) {
+      if (err) {
+         console.log(err);
+         res.redirect("/signup");
+      } else {
+         req.login(user);
+         res.cookie("guid", user._id);
+         res.redirect("/profile");
+         // res.send(email + " is logged in\n");/
+      }
+   });
+});
+
+// where the user submits the sign-up form
+app.post(["/signup", "/api/users"], function signup(req, res) {
+	// grab the user from the params
+	var user = req.body.user;
+	console.log(user);
+	// pull out their info
+	var firstName = user.firstName;
+	var lastName = user.lastName;		//need to do something about "remember me" being checked
+	var userName = user.userName;
+	var email = user.email;
+	var password = user.password;
+	var date = Date.now();
+
+	// create the new user
+	db.User.createSecure(userName, firstName, lastName, email, password, function (err, user) {
+		console.log("Created Secure");
+		if (err) {
+			console.log(err);
+		}
+		req.login(user);
+		res.cookie("guid", user._id);
+		console.log("logged In");
+		res.redirect("/profile");
+	});
+});
+
+////////////////////////
+/////  # SERVER #  /////
+////////////////////////
+
 app.listen(process.env.PORT || 3000, function(){
 	console.log("We're running wild!");
 });
