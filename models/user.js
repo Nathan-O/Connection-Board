@@ -16,6 +16,7 @@ var UserSchema = new Schema({
             //   submissions: [Submission]
             });                // ^ Embedded
 
+
 // *** STATICS *** //
 
    // * Create User w/ Hashed Password * //
@@ -38,7 +39,7 @@ UserSchema.statics.createSecure = function(userName, firstName, lastName, email,
    });
 };
 
-   // * Authenticate User (login) * //
+   // * Authenticate User (@ login) * //
 UserSchema.statics.authenticate = function (email, password, callback){
    console.log("Email: " + email + ", Pass: " + password);
 
@@ -64,6 +65,7 @@ UserSchema.methods.checkPassword = function (password){
     //compares password, returns true or false
   return bcrypt.compareSync(password, this.passwordDigest);
 };
+
 
 // *** DEFINE & EXPORT *** //
 
