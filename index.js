@@ -39,6 +39,7 @@ app.get("/", function (req, res){
    res.sendFile(homePath);
 });
 
+   /* User Routes */
 app.get("/signup", function(req, res){
    var signUpPath = path.join(userViews, "sign_up.html");
    res.sendFile(signUpPath);
