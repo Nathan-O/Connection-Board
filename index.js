@@ -103,6 +103,7 @@ app.get("/profile", function (req, res){
 		if (user === null){
 			res.redirect(loginPath);
 		}
+      console.log(user + " is logged in.");
 		res.sendFile(profilePath);
 	});
 });
