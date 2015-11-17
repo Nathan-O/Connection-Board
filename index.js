@@ -46,7 +46,7 @@ app.use(
 	})
 );
 
-   // * Exentend req * //
+   // * Exentend req Param * //
 app.use(function (req, res, next){
 	// for login
 	req.login = function (user){
@@ -95,6 +95,18 @@ app.get("/login", function(req, res){
    res.sendFile(loginPath);
 });
 
+app.get("/profile", function (req, res){
+   var profilePath = path.join(userViews, "show.html");
+   var loginPath = path.join(userViews, "login.html");
+	//
+	req.currentUser(function (err, user){
+		if (user === null){
+			res.redirect(loginPath);
+		}
+		res.sendFile(profilePath);
+	});
+});
+
 app.post(["/login", "/api/session"], function (req, res){
    var user = req.body.user;
    var email = user.email;
@@ -103,8 +115,10 @@ app.post(["/login", "/api/session"], function (req, res){
    db.User.authenticate(email, password, function (err, user) {
       if (err) {
          console.log(err);
-         res.redirect("/signup");
+         var signUpPath = path.join(userViews, "sign_up.html");
+         res.redirect(signUpPath);
       } else {
+         var profilePath = path.join(userViews, "show.html");
          req.login(user);
          res.cookie("guid", user._id);
          res.redirect("/profile");
@@ -139,6 +153,14 @@ app.post(["/signup", "/api/users"], function signup(req, res) {
 	});
 });
 
+app.delete(["/logout", "api/session"], function (req, res) {
+   /* Logout */
+	console.log("clicked");
+	req.logout();
+	console.log("logged out");
+	res.redirect("/");
+});
+
 
 ////////////////////////
 /////  # SERVER #  /////
@@ -163,68 +185,16 @@ app.listen(process.env.PORT || 3000, function(){
 /
 
 // * REQUIREMENTS * //
-var bodyParser = require("body-parser");
-var express = require("express");
-var cookieParser = require("cookie-parser");
-var session = require("express-session");
-var path = require("path");
-var _ = require("underscore");
-var methodOverride = require("method-override");
-var keygen = require("keygenerator");
-var db = require("./models");
 
-var app = express();
 
 // * CONFIG * //
-app.use("/static", express.static("public"));
-app.use("/vender", express.static("bower_components"));
 
-
-app.use(methodOverride("_method"));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
-
-app.set("view engine", "ejs");
-
-var views = path.join(process.cwd(), "views/");
 
 
 // * Create Session * //
-app.use(
-	session({
-		secret: keygen._({specials: true}),
-		resave: false,
-		saveUninitialized: true
-	})
-);
 
 
-// extend req abilities
-app.use(function (req, res, next){
-	// for login
-	req.login = function (user){
-		req.session.userId = user._id;
-	};
 
-	// get current user for profile
-	req.currentUser = function (callback){
-		db.User.findOne({ _id: req.session.userId }, function (err, user) {
-        req.user = user;
-        callback(null, user);
-      });
-	};
-
-	// log out user
-	req.logout = function(){
-		req.session.userId = null;
-		req.user = null;
-		console.log("Session id: " + req.session.userId);
-		console.log("User: " + req.user);
-		res.clearCookie("guid");
-	};
-
-	next();
-});
 
 
 // * ROUTES * //
@@ -247,40 +217,6 @@ app.get("/", function (req, res){	// <-- needs to have a find all db function th
 });
 
 
-app.get("/signup", function (req, res){
-	res.render("signup.ejs");
-});
-
-
-app.get("/login", function (req, res){
-	res.render("login.ejs");
-});
-
-
-app.get("/profile", function (req, res){
-	//
-	req.currentUser(function (err, user){
-		if (user === null){
-			res.redirect("/signup");
-		}
-		res.render("profile.ejs", {userInfo: user});
-	});
-});
-
-
-app.get("/user-profile", function (req, res){
-
-	var userData = req.body;		// ?? Why is this wrong???
-	console.log(req.body);
-
-	db.User.findOne(userData, function (err, user){
-		if (err){
-			console.log(err);
-			res.redirect("/not-found"); // <-- will have page.
-		}
-		res.render("user-profile.ejs", {userInfo: user});
-	});
-});
 
 
 app.post("/editor", function (req, res){
@@ -365,54 +301,6 @@ app.get("/logged", function (req, res){
 
 //  POST ROUTES  //
 
-app.post(["/login", "/api/session"], function (req, res){
-	var user = req.body.user;
-  	var email = user.email;
-  	var password = user.password;
-
-  	db.User.authenticate(email, password, function (err, user) {
-  		if (err) {
-  			console.log(err);
-  			res.redirect("/signup");
-  		} else {
-  			req.login(user);
-  			res.cookie("guid", user._id);
-  			res.redirect("/profile");
-  			// res.send(email + " is logged in\n");/
-  		}
-  	});
-});
-
-// where the user submits the sign-up form
-app.post(["/signup", "/api/users"], function signup(req, res) {
-	// grab the user from the params
-	var user = req.body.user;
-	console.log(user);
-	// pull out their info
-	var firstName = user.firstName;
-	var lastName = user.lastName;		//need to do something about "remember me" being checked
-	var userName = user.userName;
-	var email = user.email;
-	var password = user.password;
-	var date = Date.now();
-
-	// create the new user
-	db.User.createSecure(userName, firstName, lastName, email, password, function (err, user) {
-		console.log("Created Secure");
-		if (err) {
-			console.log(err);
-		}
-		req.login(user);
-		res.cookie("guid", user._id);
-<<<<<<< HEAD
-		console.log("logged In");
-=======
-		console.log("logged In")
->>>>>>> 2e3751c9234d5f1fb557a785cdcdd6bb80fe621c
-		res.redirect("/profile");
-	});
-});
-
 // New Story submission is aces ! /
 app.post(["/submissions", "/api/submissions"], function (req, res) {
 	newSubmission = req.body;
@@ -478,9 +366,7 @@ app.delete("/story", function (req, res) {
 });
 
 // * SERVER * //
-app.listen(process.env.PORT || 3000, function(){
-	console.log("We're running wild!");
-=======
+
 
 app.post("/deleteStory", function (req, res) {
 	//console.log(req.body); //<-- equals right stuff
@@ -517,10 +403,5 @@ app.post("/deleteStory", function (req, res) {
 		//res.send("Deleted " + deleteID[0]);
 });
 
-//  SERVER  //
-app.listen(process.env.PORT || 3000, function(){
-	console.log("We're running wild!")
->>>>>>> 2e3751c9234d5f1fb557a785cdcdd6bb80fe621c
-});
 
 */
