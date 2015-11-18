@@ -48,21 +48,22 @@ app.use(
 
    // * Exentend req Param * //
 app.use(function (req, res, next){
-	// for login
+
 	req.login = function (user){
+      // Login user
 		req.session.userId = user._id;
 	};
 
-	// get current user for profile
 	req.currentUser = function (callback){
+      // Find currently logged in User
 		db.User.findOne({ _id: req.session.userId }, function (err, user) {
         req.user = user;
         callback(null, user);
       });
 	};
 
-	// log out user
 	req.logout = function(){
+      // Logout user
 		req.session.userId = null;
 		req.user = null;
 		console.log("Session id: " + req.session.userId);
@@ -101,7 +102,7 @@ app.get("/profile", function (req, res){
 	//
 	req.currentUser(function (err, user){
 		if (user === null){
-			res.redirect(loginPath);
+			res.sendFile(loginPath);
 		}
       console.log(user + " is logged in.");
 		res.sendFile(profilePath);
