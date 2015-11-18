@@ -34,6 +34,7 @@ app.use(cookieParser());
 // app.set("view engine", "ejs");
 var views = path.join(process.cwd(), "/Public/views");
 var userViews = path.join(process.cwd(), "/Public/views/user");
+var projectViews = path.join(process.cwd(), "/Public/views/project");
 
    // * Create Session * //
 app.use(
@@ -172,6 +173,11 @@ app.get("/projects", function(req,res){
    });
 });
 
+app.get("/projects/new", function(req, res){
+   /* Login page */
+   var newProjPath = path.join(projectViews, "new.html");
+   res.sendFile(newProjPath);
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
