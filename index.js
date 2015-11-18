@@ -85,16 +85,19 @@ app.get("/", function (req, res){
 
    // * User Routes * //
 app.get("/signup", function(req, res){
+   /* Signup page */
    var signUpPath = path.join(userViews, "sign_up.html");
    res.sendFile(signUpPath);
 });
 
 app.get("/login", function(req, res){
+   /* Login page */
    var loginPath = path.join(userViews, "login.html");
    res.sendFile(loginPath);
 });
 
 app.get("/profile", function (req, res){
+   /* User show page */
    var profilePath = path.join(userViews, "show.html");
    var loginPath = path.join(userViews, "login.html");
 	//
@@ -108,6 +111,7 @@ app.get("/profile", function (req, res){
 });
 
 app.post(["/login", "/api/session"], function (req, res){
+   /* Login user */
    var user = req.body.user;
    var email = user.email;
    var password = user.password;
@@ -118,7 +122,7 @@ app.post(["/login", "/api/session"], function (req, res){
          var signUpPath = path.join(userViews, "sign_up.html");
          res.redirect(signUpPath);
       } else {
-         var profilePath = path.join(userViews, "show.html");
+         // var profilePath = path.join(userViews, "show.html");
          req.login(user);
          res.cookie("guid", user._id);
          res.redirect("/profile");
@@ -128,10 +132,11 @@ app.post(["/login", "/api/session"], function (req, res){
 });
 
 app.post(["/signup", "/api/users"], function signup(req, res) {
+   /* Signup new user */
 	// grab the user from the params
 	var user = req.body.user;
 	console.log(user);
-	// pull out their info
+	// Pull info from user
 	var firstName = user.firstName;
 	var lastName = user.lastName;		//need to do something about "remember me" being checked
 	var userName = user.userName;
@@ -171,18 +176,20 @@ app.delete(["/logout", "api/session"], function (req, res) {
 ////////////////////////////////////////////////////////////////////////////////
 
 app.get("/users", function (req, res){
-    db.User.find({}, function (err, users) {
+   // Show all users
+   db.User.find({}, function (err, users) {
 		res.send(users);
 	});
 });
 
 app.get("/logged", function (req, res){
+   //  Show logged in user
 	db.User.find({ _id: req.session.userId }, function (err, user) {
 		if (err){
 			console.log(err);
-			res.send("No One");
+			res.send("No one is logged in.");
 		}
-    	res.send(user);
+   	res.send(user);
 	});
 });
 
