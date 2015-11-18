@@ -19,7 +19,7 @@ var ProjectSchema = new Schema({
 var BoardSchema = new Schema({
                   // code              // Belongs to project
                   name: String,
-                  type: String, // (Ex: Default, Map, Timeline, Portfolio, etc…)
+                  type: String, // (Ex: Default, Family Tree, Map, Timeline, Portfolio, etc…)
                   // CONNECTION LOGIC //
                });
 
@@ -28,7 +28,7 @@ var BoardSchema = new Schema({
 var CardSchema = new Schema({
                   // code              // Belongs to board
                   name: String,
-                  type: String, // (Ex: Person, Event, Location, etc…)
+                  type: String, // (Ex: Person, Organization, Location, etc…)
                   // CONNECTION LOGIC //
                });
 
