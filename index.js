@@ -1,12 +1,10 @@
 /*
 /////////////////////////////////////////////////////////
 
-					Server-Side js
+					    Server-Side js
 
 /////////////////////////////////////////////////////////
 */
-
-// # [TITLE] # //
 
 ////////////////////////
 //  # REQUIREMENTS  # //
@@ -80,10 +78,10 @@ app.use(function (req, res, next){
 
    // * Root * //
 app.get("/", function (req, res){
-   // res.send("Hello World");
    var homePath = path.join(views, "index.html");
    res.sendFile(homePath);
 });
+
 
    // * User Routes * //
 app.get("/signup", function(req, res){
@@ -129,7 +127,6 @@ app.post(["/login", "/api/session"], function (req, res){
    });
 });
 
-// where the user submits the sign-up form
 app.post(["/signup", "/api/users"], function signup(req, res) {
 	// grab the user from the params
 	var user = req.body.user;
@@ -162,6 +159,8 @@ app.delete(["/logout", "api/session"], function (req, res) {
 	console.log("logged out");
 	res.redirect("/");
 });
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
