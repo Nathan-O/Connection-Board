@@ -76,14 +76,14 @@ app.use(function (req, res, next){
 /////  # ROUTES #  /////
 ////////////////////////
 
-   // * Root * //
+   // *** Root *** //
 app.get("/", function (req, res){
    var homePath = path.join(views, "index.html");
    res.sendFile(homePath);
 });
 
 
-   // * User Routes * //
+   // *** User Routes *** //
 app.get("/signup", function(req, res){
    /* Signup page */
    var signUpPath = path.join(userViews, "sign_up.html");
@@ -163,6 +163,13 @@ app.delete(["/logout", "api/session"], function (req, res) {
 	req.logout();
 	console.log("logged out");
 	res.redirect("/");
+});
+
+   // *** Project Routes *** //
+app.get("/projects", function(req,res){
+   db.Project.find({}, function (err, projects){
+      res.send(projects);
+   });
 });
 
 
