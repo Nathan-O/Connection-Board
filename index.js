@@ -350,7 +350,7 @@ app.post(["/submissions", "/api/submissions"], function (req, res) {
 			return console.log("findOne ERR = " + err);
 <<<<<<< HEAD
 		}
-=======
+
 		};
 		console.log("Entering story model for " + user.firstName);
 >>>>>>> 2e3751c9234d5f1fb557a785cdcdd6bb80fe621c
