@@ -12,8 +12,8 @@ var UserSchema = new Schema({
                dateCreated: {
                  type: Date,
                  default: Date.now()
-               }
-            //   submissions: [Submission]
+              }
+               // projects: [Project]
             });                // ^ Embedded
 
 

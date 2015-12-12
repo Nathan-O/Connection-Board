@@ -12,6 +12,7 @@ var ProjectSchema = new Schema({
                               default: Date.now()
                            }
                   // CONNECTION LOGIC //
+                  // boards: [Board]
                });
 
 
@@ -21,6 +22,7 @@ var BoardSchema = new Schema({
                   name: String,
                   type: String, // (Ex: Default, Family Tree, Map, Timeline, Portfolio, etc…)
                   // CONNECTION LOGIC //
+                  // cards: [Card]
                });
 
 
