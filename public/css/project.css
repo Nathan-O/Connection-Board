@@ -1,3 +1,8 @@
 .sanity-check {
    color: green;
 }
+
+#connectin_board_wrap {
+   border: 5px red solid;
+   height: 100px;
+}
